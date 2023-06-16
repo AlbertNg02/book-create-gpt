@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* CSS rules for limiting width */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .output-rectangle {
+        max-width: 90%;
+        background-color: #ffffff;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        padding: 30px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        white-space: pre-wrap;
+        /* Preserve whitespace and line breaks */
+    }
+
+    .output-container {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .output-container p {
+        margin-bottom: 10px;
+    }
+
+
+
+    .download-button {
+        margin-top: 20px;
+        text-align: center;
+        /* Center the content horizontally */
+    }
+
+    .centered-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #333333;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 3px;
+    }
+
+    .centered-link:hover {
+        background-color: #555555;
+    }
+</style>
+
+<div class="container">
+    <div class="output-rectangle">
+        <div class="output-container">
+            <p style="text-align: center;"><strong style="font-size: 32px;">Output</strong></p>
+            <div id="answer">{{ output }}</div>
+        </div>
+        <div class="download-button">
+            <a href="#" onclick="downloadMarkdownFile()" class="centered-link">Download Output</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+{% endblock %}

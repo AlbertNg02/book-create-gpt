@@ -1,0 +1,117 @@
+/* Reset default browser styles */
+html,
+body,
+h1,
+p,
+div,
+span,
+ul,
+li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    background-color: #f7f7f7;
+}
+
+/* .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+} */
+
+.output-container p {
+    margin-bottom: 10px;
+}
+
+#Overflow {
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+
+/* Header styles */
+header {
+    background-color: #333333;
+    color: #ffffff;
+    padding: 20px;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Main content styles */
+main {
+    padding: 20px;
+}
+
+/* Form styles */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="submit"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    background-color: #333333;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #555555;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .output-rectangle {
+        width: 100%;
+        max-width: 90%;
+    }
+}
+
+<style>
+/* ... Previous CSS styles ... */
+
+.download-button {
+    margin-top: 20px;
+    text-align: center;
+    /* Center the content horizontally */
+}
+
+.centered-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333333;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.centered-link:hover {
+    background-color: #555555;
+}
+
+</style>
