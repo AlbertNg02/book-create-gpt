@@ -1,9 +1,13 @@
-import aspose.words as aw
 import openai
 from flask import Flask, render_template, request, send_file, session
 from flask_socketio import SocketIO, emit
 from pprint import pprint
 import utils
+from md2pdf.core import md2pdf
+
+
+# intput_path = "book-create-gpt/data/intput.txt"
+# output_continue_path = "book-create-gpt/data/output_continue.txt"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -24,7 +28,11 @@ def data_processing():
     api_key = str(request.form['api_key'])
     openai.api_key = api_key
     output = ""
-    intput = f"As a world-renowned writer with seven years of experience and numerous published books, you have been tasked with writing an outline of a book consisting of {chapters_number} chapters, each chapter containing 2-3 sub-chapters. Give me only the table of content first, do not give a description of the outline. The output will be in PYTHON list FORMAT with NO nested list. The book prompt is: {prompt}. Also, have a conclusion at the end of the table of contents; no need for starting greetings, acknowledgments, or references. The chapter and sub-chapter names should be explicit."
+
+    with open('data/input.txt', 'r') as file:
+        input_txt = file.read()
+
+    intput = input_txt.format(chapters_number=chapters_number, prompt=prompt)
 
     # Make the first request to retrieve the table of contents and introduction
     completion = openai.ChatCompletion.create(
@@ -37,14 +45,19 @@ def data_processing():
     init_output = completion["choices"][0]["message"]["content"]
     output += init_output
     table_of_contents = utils.extract_table_of_contents(init_output)
-    print("-----------Table of contents start-------")
+
     pprint(table_of_contents)
 
     # Loop over to get the specific table of contents pages
     # for topic_index in range(len(table_of_contents)):
-    for topic_index in range(3):
+    for topic_index in range(1):
         curr_topic = table_of_contents[topic_index]
-        output_continue = f"We have a table of content which is {table_of_contents}, now we have to expand upon each subtopic. The current subtopic that needs to be extended is {curr_topic}. Start the response with the {curr_topic} as the headline by itself on a new line. The whole output must be RAW MARKDOWN and have the {curr_topic} as an appropriate heading. Avoid using headings for anything else apart from the main topic "
+
+        with open('data/output_continue.txt', 'r') as file:
+            output_continue_txt = file.read()
+
+        output_continue = output_continue_txt.format(
+            table_of_contents=table_of_contents, curr_topic=curr_topic)
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
             messages=[
@@ -70,15 +83,19 @@ def download():
     if output is None:
         return 'No output available for download.'
 
-    file_path_md = 'output.md'
     file_path_pdf = 'output.pdf'
+    file_path_md = 'output.md'
 
-    with open(file_path_md, 'w') as file:
-        file.write(output)
+    try:
+        with open(file_path_md, 'w') as f:
+            f.write(output)
 
-    # Convert Markdown to PDF using Aspose.Words
-    doc = aw.Document(file_path_md)
-    doc.save(file_path_pdf)
+        md2pdf(file_path_pdf,
+               md_content=output,
+               )
+
+    except Exception as e:
+        print(f"Error during conversion: {str(e)}")
 
     return send_file(file_path_pdf, as_attachment=True)
 

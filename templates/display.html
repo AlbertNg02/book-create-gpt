@@ -72,6 +72,7 @@
     });
 
     socket.on('output_update', function (data) {
+        console.log('pre new data');
         $('#content').text(data.output); // Update the content of the div
         console.log('NEW DATA OUTPUTTED');
     });
