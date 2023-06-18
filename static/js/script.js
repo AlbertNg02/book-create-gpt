@@ -1,12 +1,12 @@
-function downloadMarkdownFile() {
-    var outputText = document.getElementById("answer").innerText;
-    var blob = new Blob([outputText], { type: "text/markdown" });
-    var anchor = document.createElement("a");
-    anchor.download = "output.md";
-    anchor.href = window.URL.createObjectURL(blob);
-    anchor.style.display = "none";
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    window.URL.revokeObjectURL(anchor.href); // Clean up the object URL
-}
+const socket=io('http://127.0.0.1');
+
+socket.on('connect', function () {
+    console.log('Connected to server!');
+});
+
+socket.on('output_update', function (data) {
+    console.log('##########################');
+    $('#content').html(data.output);
+});
+
+
