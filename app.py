@@ -5,6 +5,7 @@ from pprint import pprint
 import utils
 from md2pdf.core import md2pdf
 from gevent.pywsgi import WSGIServer
+import logging
 
 
 
@@ -34,7 +35,8 @@ def data_processing():
     user_input = input_txt.format(
         chapters_number=chapters_number, prompt=prompt)
 
-    init_output = utils.get_reponse(user_input)
+    # init_output = utils.get_reponse(user_input)
+    init_output = "Simple reponse"
     output += init_output
     table_of_contents = utils.extract_table_of_contents(init_output)
 
@@ -48,7 +50,8 @@ def data_processing():
 
         output_continue = output_continue_txt.format(
             table_of_contents=table_of_contents, curr_topic=curr_topic)
-        output += utils.get_reponse(output_continue)
+        output += "[simeple output]"
+        # output += utils.get_reponse(output_continue)
 
         socketio.emit('output_update', {'output': output}, namespace='/test')
         socketio.sleep(0)  # Yield control to other events
@@ -87,8 +90,9 @@ def download():
     return send_file(file_path_pdf, as_attachment=True)
 
 
-@socketio.on('connect', namespace='/test')
+@socketio.on('connect')
 def connect():
+    logging.info('Client connected with logging')
     print('Client connected')
 
 
