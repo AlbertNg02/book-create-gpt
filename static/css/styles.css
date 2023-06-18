@@ -19,17 +19,56 @@ body {
     background-color: #f7f7f7;
 }
 
+/* CSS rules for limiting width */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
+.output-rectangle {
+    max-width: 90%;
+    background-color: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 30px;
+    box-shadow: 1 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: pre-wrap;
+    /* Preserve whitespace and line breaks */
+}
+
+.output-container {
+    margin-top: 21px;
+    text-align: left;
+}
 
 .output-container p {
-    margin-bottom: 10px;
+    margin-bottom: 11px;
+}
+
+.download-button {
+    margin-top: 21px;
+    text-align: center;
+    /* Center the content horizontally */
+}
+
+.centered-link {
+    display: inline-block;
+    padding: 11px 20px;
+    background-color: #333334;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.centered-link:hover {
+    background-color: #555556;
 }
 
 #Overflow {
     overflow-wrap: break-word;
     hyphens: auto;
 }
-
 
 /* Header styles */
 header {
@@ -87,9 +126,6 @@ input[type="submit"]:hover {
     }
 }
 
-<style>
-/* ... Previous CSS styles ... */
-
 .download-button {
     margin-top: 20px;
     text-align: center;
@@ -108,5 +144,3 @@ input[type="submit"]:hover {
 .centered-link:hover {
     background-color: #555555;
 }
-
-</style>

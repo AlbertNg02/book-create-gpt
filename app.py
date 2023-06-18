@@ -13,8 +13,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
 socketio = SocketIO(app)
 
-openai.api_key = ''
-
 
 @app.route('/', methods=['GET'])
 def data_request():
@@ -32,21 +30,14 @@ def data_processing():
     with open('data/input.txt', 'r') as file:
         input_txt = file.read()
 
-    intput = input_txt.format(chapters_number=chapters_number, prompt=prompt)
+    user_input = input_txt.format(
+        chapters_number=chapters_number, prompt=prompt)
 
-    # Make the first request to retrieve the table of contents and introduction
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        messages=[
-            {"role": "system", "content": "You are a book writer"},
-            {"role": "user", "content": intput}
-        ]
-    )
-    init_output = completion["choices"][0]["message"]["content"]
+    init_output = utils.get_reponse(user_input)
     output += init_output
     table_of_contents = utils.extract_table_of_contents(init_output)
 
-    pprint(table_of_contents)
+    # pprint(table_of_contents)
 
     # Loop over to get the specific table of contents pages
     # for topic_index in range(len(table_of_contents)):
@@ -58,14 +49,7 @@ def data_processing():
 
         output_continue = output_continue_txt.format(
             table_of_contents=table_of_contents, curr_topic=curr_topic)
-        completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
-            messages=[
-                {"role": "system", "content": "You are a book writer"},
-                {"role": "user", "content": output_continue}
-            ]
-        )
-        output += completion["choices"][0]["message"]["content"]
+        output += utils.get_reponse(output_continue)
 
         # Emit the updated output via web socket
         socketio.emit('output_update', {'output': output}, namespace='/test')
