@@ -1,7 +1,7 @@
 import openai
 
 
-def get_reponse(input):
+def get_response(input):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-16k",
         messages=[

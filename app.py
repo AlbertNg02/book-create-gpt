@@ -1,14 +1,20 @@
-import openai
-from flask import Flask, render_template, request, send_file, session
-from flask_socketio import SocketIO, emit,ConnectionRefusedError
-from pprint import pprint
-import utils
-from md2pdf.core import md2pdf
-from gevent.pywsgi import WSGIServer
 import logging
 import os
 
-app = Flask(__name__)
+import openai
+from flask import Flask, render_template, request, send_file, session
+from flask_socketio import SocketIO, emit, ConnectionRefusedError
+from flask_cors import CORS
+from gevent.pywsgi import WSGIServer
+from md2pdf.core import md2pdf
+from pprint import pprint
+import utils
+
+
+
+
+
+app = Flask(__name__, template_folder='frontend/templates')
 own_pid = os.getpid() 
 app.config['SECRET_KEY'] = 'your-secret-key'
 socketio = SocketIO(app)
@@ -35,7 +41,6 @@ def handle_connect():
 def handle_disconnect():
     print('A client disconnected')
 
-
 @app.route('/', methods=['POST'])
 def data_processing():
     prompt = request.form['prompt']
@@ -44,43 +49,39 @@ def data_processing():
     openai.api_key = api_key
     output = ""
 
-    with open('data/input.txt', 'r') as file:
-        input_txt = file.read()
+    with open('data/input_prompt.txt', 'r') as input_file:
+        input_text = input_file.read()
 
-    user_input = input_txt.format(
-        chapters_number=chapters_number, prompt=prompt)
+    user_input = input_text.format(chapters_number=chapters_number, prompt=prompt)
 
-    init_output = utils.get_reponse(user_input)
-    # init_output = "Simple reponse"
-    output += init_output
-    table_of_contents = utils.extract_table_of_contents(init_output)
+    initial_output = utils.get_response(user_input)
+    output += initial_output
 
-    # pprint(table_of_contents)
+    table_of_contents = utils.extract_table_of_contents(initial_output)
 
     for topic_index in range(2):
-        curr_topic = table_of_contents[topic_index]
+        current_topic = table_of_contents[topic_index]
+        output_continue = get_formatted_output_continue(table_of_contents, current_topic)
+        output += utils.get_response(output_continue)
 
-        with open('data/output_continue.txt', 'r') as file:
-            output_continue_txt = file.read()
 
-        output_continue = output_continue_txt.format(
-            table_of_contents=table_of_contents, curr_topic=curr_topic)
-        # output += "[simeple output]"
-        output += utils.get_reponse(output_continue)
-
-        print("Emit start")
-        socketio.emit('output_update', {'output': output}, namespace='/test')
-        print("Emit end")
-        socketio.sleep(0)  # Yield control to other events
-
-    session['output'] = output
-    
-    with open('data/output.txt', 'w') as file:
-        file.write(output)
+    save_output(output)
 
     return render_template('display.html', output=output)
 
 
+def get_formatted_output_continue(table_of_contents, current_topic):
+    with open('data/output_continue_prompt.txt', 'r') as output_continue_file:
+        output_continue_text = output_continue_file.read()
+
+    return output_continue_text.format(table_of_contents=table_of_contents, current_topic=current_topic)
+
+
+def save_output(output):
+    session['output'] = output
+
+    with open('data/output.txt', 'w') as output_file:
+        output_file.write(output)
 
 
 @app.route('/download', methods=['GET'])
