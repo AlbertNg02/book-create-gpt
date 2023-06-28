@@ -13,11 +13,10 @@ import utils
 
 
 
-
-app = Flask(__name__, template_folder='frontend/templates')
-own_pid = os.getpid() 
-app.config['SECRET_KEY'] = 'your-secret-key'
-socketio = SocketIO(app)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+CORS(app,resources={r"/*":{"origins":"*"}})
+socketio = SocketIO(app,cors_allowed_origins="*")
 
 
 
@@ -27,9 +26,6 @@ def kill_backend():
     os.kill(own_pid, 9) 
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 
 
@@ -43,10 +39,21 @@ def handle_disconnect():
 
 @app.route('/', methods=['POST'])
 def data_processing():
-    prompt = request.form['prompt']
-    chapters_number = int(request.form['chapters_number'])
-    api_key = str(request.form['api_key'])
-    openai.api_key = api_key
+        # Get the JSON data from the request body
+    data = request.get_json()
+
+    # Extract the values from the data
+    prompt = data.get('prompt')
+    chapters_number = data.get('chapters')
+    gptKey = data.get('gptKey')
+
+    print(prompt)
+    print(chapters_number)
+    print(gptKey)
+    print("------------------------")
+
+
+    openai.api_key = gptKey
     output = ""
 
     with open('data/input_prompt.txt', 'r') as input_file:
@@ -67,7 +74,7 @@ def data_processing():
 
     save_output(output)
 
-    return render_template('display.html', output=output)
+    # return render_template('display.html', output=output)
 
 
 def get_formatted_output_continue(table_of_contents, current_topic):
