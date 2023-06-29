@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Route} from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
+import { Outlet, Link } from "react-router-dom";
 
 import './App.css';
 
@@ -11,16 +12,11 @@ function App() {
 
   // const history = useHistory();
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   await sendDataToServer(prompt, chapters, gptKey);
-  //   history.push('/new-page'); // Redirect to a new page
-  // };
-
 
     const handleSubmit = (event) => {
     event.preventDefault();
     sendDataToServer(prompt, chapters, gptKey);
+    history.push('/DownloadPage')
   };
 
   const handleInputChange = (event) => {
