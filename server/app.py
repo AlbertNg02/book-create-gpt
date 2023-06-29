@@ -2,10 +2,9 @@ import logging
 import os
 
 import openai
-from flask import Flask, render_template, request, send_file, session
+from flask import Flask, request, send_file, session
 from flask_socketio import SocketIO, emit, ConnectionRefusedError
 from flask_cors import CORS
-from gevent.pywsgi import WSGIServer
 from md2pdf.core import md2pdf
 from pprint import pprint
 import utils
