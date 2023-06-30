@@ -2,7 +2,7 @@ import logging
 import os
 
 import openai
-from flask import Flask, request, send_file, session
+from flask import Flask, request, send_file, session, make_response
 from flask_socketio import SocketIO, emit, ConnectionRefusedError
 from flask_cors import CORS
 from md2pdf.core import md2pdf
@@ -35,6 +35,8 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print('A client disconnected')
+
+
 
 @app.route('/', methods=['POST'])
 def data_processing():
@@ -72,6 +74,8 @@ def data_processing():
 
 
     save_output(output)
+    # TODO: Add json return statement
+    return make_response('', 200)
 
     # return render_template('display.html', output=output)
 
@@ -92,6 +96,7 @@ def save_output(output):
 
 @app.route('/download', methods=['GET'])
 def download():
+    print("Accessed Download Operation")
 
     file_path_txt = 'data/output.txt'
     file_path_pdf = 'output.pdf'

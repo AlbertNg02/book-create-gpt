@@ -1,19 +1,21 @@
 import React from "react"
 import './InputHandler.css';
 import { useState } from 'react';
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export default function InputHandler() {
     const [prompt, setPrompt] = useState('');
     const [chapters, setChapters] = useState('');
     const [gptKey, setGptKey] = useState('');
+    const navigate = useNavigate();
 
 
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        sendDataToServer(prompt, chapters, gptKey);
+        status = sendDataToServer(prompt, chapters, gptKey);
+        //TODO: Check Status
 
     };
 
@@ -42,7 +44,12 @@ export default function InputHandler() {
             },
             body: JSON.stringify(userInput),
         });
-        return redirect("/login");
+        console.log("Finished Sending")
+        
+        navigate("/download")
+
+        return true
+
 
         // Handle the response from the backend
     };

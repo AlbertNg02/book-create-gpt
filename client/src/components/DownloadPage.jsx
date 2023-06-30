@@ -1,32 +1,37 @@
 import React from 'react';
 
-class DownloadPage extends React.Component {
-  handleClick = () => {
-    fetch('/download', { method: 'GET' }) // Change '/download' to the appropriate Flask route
+export default function DownloadPage() {
+  const handleClick = () => {
+    fetch('http://127.0.0.1:5000/download', { method: 'GET' })
       .then(response => {
         if (response.ok) {
-          // Handle success response from the server
-          console.log('Download request succeeded!');
-          // You can perform additional actions here, such as downloading the file
+          return response.blob(); // Convert the response to a Blob object
         } else {
-          // Handle error response from the server
-          console.error('Download request failed!');
+          throw new Error('Download request failed!');
         }
       })
+      .then(blob => {
+        // Create a URL object from the Blob data
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary <a> element to trigger the file download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'output.pdf'; // Specify the desired filename for the downloaded file
+        link.click();
+
+        // Clean up the URL object
+        URL.revokeObjectURL(url);
+      })
       .catch(error => {
-        // Handle network error
-        console.error('Network error:', error);
+        console.error('Download error:', error);
       });
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <h1>Download Page</h1>
-        <button onClick={this.handleClick}>Download File</button>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Download Page</h1>
+      <button onClick={handleClick}>Download File</button>
+    </div>
+  );
 }
-
-export default DownloadPage;
